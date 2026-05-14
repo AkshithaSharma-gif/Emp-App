@@ -17,7 +17,7 @@ app.use(cookieParser())
 
 
 app.use(cors({
-    origin: ["https://your-netlify-site.netlify.app"],
+    origin: ["https://storied-axolotl-aae9db.netlify.app"],
     credentials: true
 }))
 
