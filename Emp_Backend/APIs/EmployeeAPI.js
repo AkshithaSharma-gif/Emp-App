@@ -1,7 +1,8 @@
 import exp from 'express'
-import { EmployeeModel } from '../models/EmployeeModel.js'
+import { EmployeeModel } from '../models/employeeModel.js'
+import { Router } from "express";
 
-export const employeeApp=exp.Router()
+export const employeeApp=Router()
 
 //cretae new employee
 employeeApp.post("/employees",async (req,res)=>{                                    
@@ -28,7 +29,7 @@ employeeApp.get("/employees",async(req,res)=>{
 
 
 employeeApp.put('/employees/:email',async(req,res)=>{
-    
+
     let modifiedEmp=req.body
     const empEmail=req.params.email
     const emp=await EmployeeModel.findOne({Email:empEmail})
