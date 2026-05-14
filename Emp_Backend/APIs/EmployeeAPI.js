@@ -1,5 +1,5 @@
 import exp from 'express'
-import { EmployeeModel } from '../models/EmployeeModel.js'
+import { EmployeeModel } from '../models/employeeModel.js'
 
 export const employeeApp=exp.Router()
 
