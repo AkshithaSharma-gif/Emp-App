@@ -1,7 +1,7 @@
 import exp from 'express'
 import { EmployeeModel } from '../models/employeeModel.js'
 
-export const EmployeeModelexp.Router()
+export const employeeApp.Router()
 
 //cretae new employee
 employeeApp.post("/employees",async (req,res)=>{                                    
