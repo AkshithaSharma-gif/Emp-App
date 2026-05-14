@@ -17,11 +17,11 @@ app.use(cookieParser())
 
 
 app.use(cors({
-    origin:["http://localhost:5173"]
-}))
-
-app.use(cors({
-    origin:["http://localhost:4000"]
+    origin: [
+        "http://localhost:5173",
+        "http://localhost:4000"
+    ],
+    credentials: true
 }))
 
 //body parser middleware
@@ -35,12 +35,15 @@ const port=process.env.PORT || 4000
 async function connectDB(){
     try{
         await connect(process.env.DB_URL);
-        console.log("DB connection succesfull");
-        //start server
-        app.listen(port,()=>console.log("server on port 4000.."))
-    }
-    catch(err){
-        console.log("Error in db connection :",err);
+        console.log("DB connection successful");
+
+        app.listen(port, () =>
+            console.log(`server on port ${port}`)
+        );
+
+    } catch(err){
+        console.log("Error in db connection :", err.message);
+        process.exit(1);
     }
 }
 
