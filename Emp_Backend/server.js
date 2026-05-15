@@ -1,64 +1,90 @@
-//create http server
+// server.js (or app.js)
 
-import exp from 'express'; 
-import {connect} from 'mongoose'
-import cookieParser from "cookie-parser"
-import {config} from 'dotenv'
-import {employeeApp} from './APIs/EmployeeAPI.js'
-import cors from 'cors'
-
-
-config();           //process.env.PORT , process.env.PORT
-
-const app=exp();      
-
-app.use(cookieParser())
-//add cookie parser
-
+import express from "express";
+import mongoose from "mongoose";
+import cookieParser from "cookie-parser";
+import dotenv from "dotenv";
 import cors from "cors";
+import { employeeApp } from "./APIs/EmployeeAPI.js";
 
-app.use(cors({
-  origin: "https://employee-app-alpha-ashen.vercel.app",
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  credentials: true
-}));
+dotenv.config();
 
+const app = express();
+
+/* ---------------- CORS CONFIG ---------------- */
+
+const allowedOrigins = [
+  "https://employee-app-alpha-ashen.vercel.app",
+  "http://localhost:5173"
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // allow REST tools like Postman (no origin)
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    credentials: true
+  })
+);
+
+// IMPORTANT: handle preflight requests properly
 app.options("*", cors());
 
-//body parser middleware
-app.use(exp.json())    
+/* ---------------- MIDDLEWARE ---------------- */
 
-app.use("/employee-api",employeeApp)
+app.use(express.json());
+app.use(cookieParser());
 
-//port number
-const port=process.env.PORT || 4000
+/* ---------------- ROUTES ---------------- */
 
-async function connectDB(){
-    try{
-        await connect(process.env.DB_URL);
-        console.log("DB connection succesfull");
-        //start server
-        app.listen(port,()=>console.log("server on port 4000.."))
-    }
-    catch(err){
-        console.log("Error in db connection :",err);
-    }
+app.use("/employee-api", employeeApp);
+
+/* ---------------- DB + SERVER ---------------- */
+
+const port = process.env.PORT || 4000;
+
+async function startServer() {
+  try {
+    await mongoose.connect(process.env.DB_URL);
+    console.log("DB connection successful");
+
+    app.listen(port, () => {
+      console.log(`Server running on port ${port}`);
+    });
+  } catch (err) {
+    console.error("DB connection error:", err);
+  }
 }
 
-connectDB();
+startServer();
 
-//error handling middleware(must be present at the end of the file only) - only exectes when error is occured
-app.use((err,req,res,next)=>{
-    console.log(err.name)
-    //validation error
-    if(err.name==='ValidationError'){
-        return res.status(400).json({message:"Error",error:err.message})
-    }
-    //cast error
-    if(err.name==='CastError'){
-        return res.status(400).json({message:"Error",error:err.message})
-    }
+/* ---------------- ERROR HANDLING ---------------- */
 
-    //send server side errors
-    res.status(500).json({message:"Error from server side",error:err.message})
-})
+app.use((err, req, res, next) => {
+  console.error(err);
+
+  if (err.name === "ValidationError") {
+    return res.status(400).json({
+      message: "Validation Error",
+      error: err.message
+    });
+  }
+
+  if (err.name === "CastError") {
+    return res.status(400).json({
+      message: "Invalid ID / Cast Error",
+      error: err.message
+    });
+  }
+
+  res.status(500).json({
+    message: "Server Error",
+    error: err.message
+  });
+});
