@@ -1,4 +1,4 @@
-// server.js (or app.js)
+// server.js
 
 import express from "express";
 import mongoose from "mongoose";
@@ -13,28 +13,16 @@ const app = express();
 
 /* ---------------- CORS CONFIG ---------------- */
 
-const allowedOrigins = [
-  "https://employee-app-alpha-ashen.vercel.app",
-  "http://localhost:5173"
-];
-
 app.use(
   cors({
-    origin: function (origin, callback) {
-      // allow REST tools like Postman (no origin)
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin: "https://employee-app-alpha-ashen.vercel.app",
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true
   })
 );
 
-// IMPORTANT: handle preflight requests properly
-app.options("*", cors());
+// IMPORTANT: safe wildcard for preflight (DO NOT use "*")
+app.options("/*", cors());
 
 /* ---------------- MIDDLEWARE ---------------- */
 
@@ -78,7 +66,7 @@ app.use((err, req, res, next) => {
 
   if (err.name === "CastError") {
     return res.status(400).json({
-      message: "Invalid ID / Cast Error",
+      message: "Invalid ID",
       error: err.message
     });
   }
