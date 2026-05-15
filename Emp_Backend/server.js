@@ -11,18 +11,15 @@ dotenv.config();
 
 const app = express();
 
-/* ---------------- CORS CONFIG ---------------- */
+/* ---------------- CORS (SAFE VERSION) ---------------- */
 
 app.use(
   cors({
     origin: "https://employee-app-alpha-ashen.vercel.app",
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true
   })
 );
-
-// IMPORTANT: safe wildcard for preflight (DO NOT use "*")
-app.options("/*", cors());
 
 /* ---------------- MIDDLEWARE ---------------- */
 
