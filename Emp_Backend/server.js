@@ -15,11 +15,13 @@ const app=exp();
 app.use(cookieParser())
 //add cookie parser
 
-
 app.use(cors({
-    origin: ["https://storied-axolotl-aae9db.netlify.app"],
-    credentials: true
-}))
+  origin: [
+    "http://localhost:5173",
+    "https://employee-app-alpha-ashen.vercel.app"
+  ],
+  credentials: true
+}));
 
 //body parser middleware
 app.use(exp.json())    
