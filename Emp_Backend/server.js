@@ -15,13 +15,15 @@ const app=exp();
 app.use(cookieParser())
 //add cookie parser
 
+import cors from "cors";
+
 app.use(cors({
-  origin: [
-    "http://localhost:5173",
-    "https://employee-app-alpha-ashen.vercel.app"
-  ],
+  origin: "https://employee-app-alpha-ashen.vercel.app",
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   credentials: true
 }));
+
+app.options("*", cors());
 
 //body parser middleware
 app.use(exp.json())    
